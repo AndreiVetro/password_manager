@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="878.0" prefWidth="1461.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1">
+   <top>
+      <HBox spacing="1100.0" BorderPane.alignment="TOP_LEFT">
+         <BorderPane.margin>
+            <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+         </BorderPane.margin>
+         <children>
+            <Button mnemonicParsing="false" onAction="#backButtonOnClick" text="Main Page">
+               <font>
+                  <Font size="25.0" />
+               </font>
+            </Button>
+            <Label text="Log in">
+               <font>
+                  <Font size="35.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+   </top>
+   <center>
+      <HBox maxWidth="700.0" prefHeight="670.0" prefWidth="654.0" spacing="20.0" BorderPane.alignment="TOP_LEFT">
+         <children>
+            <VBox prefWidth="127.0" spacing="10.0">
+               <children>
+                  <Label text="Username">
+                     <font>
+                        <Font size="23.0" />
+                     </font>
+                  </Label>
+                  <Label text="Password">
+                     <font>
+                        <Font size="23.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox prefHeight="963.0" prefWidth="558.0" spacing="11.0">
+               <children>
+                  <TextField fx:id="usernameTextField" />
+                  <PasswordField fx:id="loginPasswordField" />
+               </children>
+            </VBox>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
+         </BorderPane.margin>
+      </HBox>
+   </center>
+   <bottom>
+      <Button mnemonicParsing="false" onAction="#loginButtonOnClick" text="Log in" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="550.0" left="200.0" right="250.0" top="200.0" />
+         </BorderPane.margin>
+         <font>
+            <Font size="25.0" />
+         </font>
+      </Button>
+   </bottom>
+   <right>
+      <Label fx:id="errorLabel" text="Label" BorderPane.alignment="CENTER" />
+   </right>
+</BorderPane>
