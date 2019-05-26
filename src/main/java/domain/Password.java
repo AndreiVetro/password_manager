@@ -1,6 +1,7 @@
 package domain;
 
 import javax.persistence.*;
+import java.util.Arrays;
 
 @Entity
 public class Password
@@ -52,5 +53,11 @@ public class Password
     public void setUser(User user)
     {
         this.user = user;
+    }
+
+    @Override
+    public String toString()
+    {
+        return String.valueOf(service);
     }
 }

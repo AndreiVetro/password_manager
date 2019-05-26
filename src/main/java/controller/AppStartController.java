@@ -2,6 +2,7 @@ package controller;
 
 import app.Main;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
@@ -10,7 +11,7 @@ import java.util.ResourceBundle;
 
 
 @Controller
-public class AppStartController implements FXMLController
+public class AppStartController extends ParentController implements FXMLController
 {
 
     @FXML

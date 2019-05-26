@@ -18,7 +18,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 @Controller
-public class NewUserController implements FXMLController
+public class NewUserController extends ParentController implements FXMLController
 {
 
     @Autowired

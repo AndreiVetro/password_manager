@@ -3,6 +3,7 @@ package controller;
 import app.Main;
 import domain.User;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -17,7 +18,7 @@ import java.util.ResourceBundle;
 
 
 @Controller
-public class ExistingUserController implements FXMLController
+public class ExistingUserController extends ParentController implements FXMLController
 {
 
     @Autowired
@@ -41,24 +42,29 @@ public class ExistingUserController implements FXMLController
         if(username.isEmpty())
         {
             errorLabel.setText("Username can't be empty");
+            errorLabel.setVisible(true);
+
         }
         else if(loginPasswordField.textProperty().isEmpty().get())
         {
             errorLabel.setText("Password can't be empty");
+            errorLabel.setVisible(true);
+
         }
         else
         {
             User user = userRepository.getByUsername(username);
-
-            if(user == null || !Arrays.equals(user.getMasterPassword(), loginPasswordField.getText().toCharArray()))
+            System.out.println(user.getUsername() + " before if");
+            if(!Arrays.equals(user.getMasterPassword(), loginPasswordField.getText().toCharArray()))
             {
                 errorLabel.setText("Invalid login credentials");
+                errorLabel.setVisible(true);
             }
             else
             {
+                System.out.println(user.getUsername() + " in else");
+                Main.user = user;
                 Main.openNewScreen("userMain", this, UserMainController.class);
-                //success
-
             }
 
         }
@@ -73,6 +79,6 @@ public class ExistingUserController implements FXMLController
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
-
+        errorLabel.setVisible(false);
     }
 }

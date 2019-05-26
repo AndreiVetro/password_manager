@@ -51,4 +51,9 @@ public class PasswordRepository implements Repository<Password>
     {
         return session.createQuery("from Password").list();
     }
+
+    public List<Password> getAllForUser(int id)
+    {
+        return session.createQuery("from Password where user_id = ?").setParameter(0, id).list();
+    }
 }

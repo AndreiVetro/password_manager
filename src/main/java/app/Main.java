@@ -1,12 +1,16 @@
 package app;
 
 import controller.AppStartController;
+import domain.User;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -14,9 +18,10 @@ import java.io.IOException;
 
 public class Main extends Application
 {
-    public static Stage primaryStage;
+    private static Stage primaryStage;
     private static Scene selectScene;
     private static ApplicationContext applicationContext;
+    public static User user;
 
     public static void goBackButtonOnClick()
     {
@@ -59,6 +64,12 @@ public class Main extends Application
         primaryStage.setFullScreenExitHint("");
         primaryStage.setFullScreen(true);
         primaryStage.show();
+
+        primaryStage.setOnCloseRequest(t ->
+        {
+            Platform.exit();
+            System.exit(0);
+        });
     }
 
     public static void main(String[] args)
