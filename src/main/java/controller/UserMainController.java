@@ -2,21 +2,13 @@ package controller;
 
 import app.Main;
 import domain.Password;
-import domain.User;
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.util.Callback;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import repository.PasswordRepository;
 
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -31,7 +23,7 @@ public class UserMainController extends ParentController implements FXMLControll
     private static Button sourceButton;
 
     @FXML
-    private PasswordField passwordField;
+    private TextField passwordTextField;
 
     @FXML
     private ListView<Password> passwordListView;
@@ -64,6 +56,8 @@ public class UserMainController extends ParentController implements FXMLControll
     private Label visibleLabel;
 
     private Boolean visiblePressed;
+    private SelectionModel<Password> selectionModel;
+    private Password selectedPassword;
     @FXML
     public void backButtonOnClick()
     {
@@ -79,11 +73,11 @@ public class UserMainController extends ParentController implements FXMLControll
         return new String(array, Charset.forName("UTF-8"));
     }
 
-    private void zeroPassword()
+    private void zeroArray(char[] array)
     {
-        synchronized (password)
+        synchronized (array)
         {
-            Arrays.fill(password, '0');
+            Arrays.fill(array, '0');
         }
     }
 
@@ -92,13 +86,17 @@ public class UserMainController extends ParentController implements FXMLControll
     public void initialize(URL location, ResourceBundle resources)
     {
         passwordListView.setItems(FXCollections.observableList(getPasswordsCurrentUser()));
+        final Clipboard clipboard = Clipboard.getSystemClipboard();
+        final ClipboardContent content = new ClipboardContent();
         passwordListView.setOnMouseClicked(event ->
         {
 
-            final Clipboard clipboard = Clipboard.getSystemClipboard();
-            final ClipboardContent content = new ClipboardContent();
-            content.putString(String.valueOf(passwordListView.getSelectionModel().getSelectedItem().getText()));
-            clipboard.setContent(content);
+
+            if(!passwordListView.getSelectionModel().isEmpty())
+            {
+                content.putString(String.valueOf(passwordListView.getSelectionModel().getSelectedItem().getText()));
+                clipboard.setContent(content);
+            }
 
         });
 
@@ -113,55 +111,87 @@ public class UserMainController extends ParentController implements FXMLControll
         editButton.setOnAction(event ->
         {
             sourceButton = (Button) event.getSource();
+
+            SelectionModel<Password> selectionModel = passwordListView.getSelectionModel();
+            if(!selectionModel.isEmpty())
+            {
+                Password selectedPassword = selectionModel.getSelectedItem();
+                serviceTextField.setText(String.valueOf(selectedPassword.getService()));
+                passwordTextField.setText(String.valueOf(selectedPassword.getText()));
+            }
             addEditHBox.setVisible(true);
         });
 
         generateButton.setOnAction(event ->
         {
-            passwordField.setText(getRandomString());
+            passwordTextField.setText(getRandomString());
         });
 
 
         visiblePressed = false;
         visibleLabel.setOnMouseClicked(event ->
         {
-            password = passwordField.getText().toCharArray();
+            password = passwordTextField.getText().toCharArray();
             if(visiblePressed)
             {
-                passwordField.clear();
-                passwordField.setPromptText(String.valueOf(password));
+                passwordTextField.clear();
+                passwordTextField.setPromptText(String.valueOf(password));
             }
             else
             {
-                passwordField.setText(String.valueOf(password));
+                passwordTextField.setText(String.valueOf(password));
+                visiblePressed = false;
             }
         });
 
 
         confirmButton.setOnAction(event ->
         {
-            Button actionButton = (Button) event.getSource();
-            if(actionButton == addButton)
+            if(sourceButton == addButton)
             {
-                errorLabel.setVisible(true);
                 String service = serviceTextField.getText();
+                char[] password = passwordTextField.getText().toCharArray();
 
                 if(service.isEmpty())
                 {
+                    errorLabel.setVisible(true);
                     errorLabel.setText("Service can't be empty");
                 }
-                else if(passwordField.textProperty().isEmpty().get())
+                else if(password.length == 0)
                 {
+                    errorLabel.setVisible(true);
                     errorLabel.setText("Password can't be empty");
                 }
+                else
+                {
+                    Password newPassword = new Password(service.toCharArray(), password, Main.user);
+                    addPassword(newPassword);
+                    passwordListView.getItems().add(newPassword);
+                }
 
+                zeroArray(password);
             }
             else
             {
+
                 //edit stuff
             }
 
             addEditHBox.setVisible(false);
+        });
+
+        serviceTextField.textProperty().addListener((observable) -> errorLabel.setVisible(false));
+        passwordTextField.textProperty().addListener(observable -> errorLabel.setVisible(false));
+
+        removeButton.setOnAction(event ->
+        {
+            SelectionModel<Password> passwordSelectionModel = passwordListView.getSelectionModel();
+            if(!passwordSelectionModel.isEmpty())
+            {
+                Password password = passwordSelectionModel.getSelectedItem();
+                removePassword(password);
+                passwordListView.getItems().remove(password);
+            }
         });
 
     }

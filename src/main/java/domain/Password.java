@@ -11,6 +11,15 @@ public class Password
     private char[] service;
     private User user;
 
+    public Password(char[] text, char[] service, User user)
+    {
+        this.text = text;
+        this.service = service;
+        this.user = user;
+    }
+
+    public Password() {}
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getId()

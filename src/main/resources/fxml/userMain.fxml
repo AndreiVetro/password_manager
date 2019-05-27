@@ -95,5 +95,6 @@
             </VBox>
          </children>
       </HBox>
+      <Label fx:id="errorLabel" layoutX="502.0" layoutY="380.0" text="Label" />
    </children>
 </AnchorPane>
