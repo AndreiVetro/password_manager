@@ -3,6 +3,7 @@ package controller;
 import app.Main;
 import domain.Password;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
@@ -58,6 +59,8 @@ public class UserMainController extends ParentController implements FXMLControll
     private Boolean visiblePressed;
     private SelectionModel<Password> selectionModel;
     private Password selectedPassword;
+    private ObservableList<Password> passwordObservableList;
+
     @FXML
     public void backButtonOnClick()
     {
@@ -86,6 +89,7 @@ public class UserMainController extends ParentController implements FXMLControll
     public void initialize(URL location, ResourceBundle resources)
     {
         selectionModel = passwordListView.getSelectionModel();
+        passwordObservableList = passwordListView.getItems();
 
         passwordListView.getSelectionModel().selectedItemProperty().addListener(observable ->
         {
@@ -162,7 +166,7 @@ public class UserMainController extends ParentController implements FXMLControll
                 {
                     Password newPassword = new Password(password, service.toCharArray(), Main.user);
                     addPassword(newPassword);
-                    passwordListView.getItems().add(newPassword);
+                    passwordObservableList.add(newPassword);
                 }
 
             }
@@ -183,7 +187,15 @@ public class UserMainController extends ParentController implements FXMLControll
             if(!selectionModel.isEmpty())
             {
                 removePassword(selectedPassword);
-                passwordListView.getItems().remove(selectedPassword);
+                passwordObservableList.remove(selectedPassword);
+                if(addEditHBox.isVisible())
+                {
+                    addEditHBox.setVisible(false);
+                    if(passwordObservableList.size() == 1)
+                    {
+                        selectedPassword = passwordObservableList.get(0);
+                    }
+                }
             }
         });
 

@@ -54,15 +54,13 @@ public class ExistingUserController extends ParentController implements FXMLCont
         else
         {
             User user = userRepository.getByUsername(username);
-            System.out.println(user.getUsername() + " before if");
-            if(!Arrays.equals(user.getMasterPassword(), loginPasswordField.getText().toCharArray()))
+            if(user != null && !Arrays.equals(user.getMasterPassword(), loginPasswordField.getText().toCharArray()))
             {
                 errorLabel.setText("Invalid login credentials");
                 errorLabel.setVisible(true);
             }
             else
             {
-                System.out.println(user.getUsername() + " in else");
                 Main.user = user;
                 Main.openNewScreen("userMain", this, UserMainController.class);
             }

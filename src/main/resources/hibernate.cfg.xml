@@ -13,7 +13,7 @@
             com.mysql.jdbc.Driver
         </property>
         <property name="hibernate.connection.url">
-            jdbc:mysql://localhost:3306/password_manager?serverTimezone=UTC
+            jdbc:mysql://localhost:3306/password_manager2?serverTimezone=UTC
         </property>
         <property name="hibernate.connection.autocommit">
             false
