@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import util.WordUtil;
 
 import java.io.IOException;
 
@@ -31,7 +32,6 @@ public class Main extends Application
 
     public static void openNewScreen(String fxmlName, Initializable sourceController, Class<?> targetController) throws IOException
     {
-
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(sourceController.getClass().getResource("/fxml/" + fxmlName + ".fxml"));
         loader.setController(applicationContext.getBean(targetController));

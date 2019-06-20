@@ -12,10 +12,11 @@ import javafx.scene.paint.Color;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import repository.UserRepository;
+import util.WordUtil;
 
-import java.io.IOException;
 import java.net.URL;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Controller
 public class NewUserController extends ParentController implements FXMLController
@@ -24,15 +25,8 @@ public class NewUserController extends ParentController implements FXMLControlle
     @Autowired
     private UserRepository userRepository;
 
-
-    @FXML
-    private HBox passwordGenerationHBox;
-
-    @FXML
-    private CheckBox passwordGenerationCheckBox;
-
-    @FXML
-    private TextField maximumWordsTextField;
+    @Autowired
+    private WordUtil wordUtil;
 
     @FXML
     private TextField usernameTextField;
@@ -44,7 +38,19 @@ public class NewUserController extends ParentController implements FXMLControlle
     private PasswordField confirmMasterPasswordField;
 
     @FXML
-    private TextField mustContainTextField;
+    private Label passwordsMatchLabel;
+
+    @FXML
+    private CheckBox passwordGenerationCheckBox;
+
+    @FXML
+    private HBox passwordGenerationHBox;
+
+    @FXML
+    private TextField englishWordCountTextField;
+
+    @FXML
+    private TextField romanianWordCountTextField;
 
     @FXML
     private CheckBox includeEnglishWordsCheckBox;
@@ -53,10 +59,25 @@ public class NewUserController extends ParentController implements FXMLControlle
     private CheckBox includeRomanianWordsCheckBox;
 
     @FXML
+    private TextField mustContainTextField;
+
+    @FXML
     private Label errorLabel;
 
     @FXML
-    private Label passwordsMatchLabel;
+    private HBox generatedPasswordHBox;
+
+    @FXML
+    private Label generatedPasswordLabel;
+
+    @FXML
+    private HBox englishWordCountHBox;
+
+    @FXML
+    private HBox romanianWordCountHBox;
+
+
+    private final static String PASSWORD_REGEX = "^(?=\\S*[A-Z])(?=\\S*[0-9])(?=\\S*[!@#$%^&*()_+=\\-`~{}\"|';:/?.>,<\\[\\]])\\S*$";
 
     @FXML
     public void createButtonOnClick()
@@ -84,13 +105,15 @@ public class NewUserController extends ParentController implements FXMLControlle
         {
             errorLabel.setText("A master password must be at least 12 characters long");
         }
-        else if(!masterPasswordTextField.getText().matches(".*"))
+        else if(!masterPasswordTextField.getText().matches(PASSWORD_REGEX))
         {
-           errorLabel.setText("A master password must contain at least an uppercase character, a number and a special symbol");
+           errorLabel.setText("A master password must contain at least an uppercase character, PASSWORD_REGEX number, PASSWORD_REGEX special character and no spaces");
         }
         else if(!masterPasswordTextField.getText().equals(confirmMasterPasswordField.getText()))
         {
             errorLabel.setText("The two passwords must match");
+
+            //TODO create button is disabled until passwords match
         }
         else
         {
@@ -132,10 +155,80 @@ public class NewUserController extends ParentController implements FXMLControlle
         }
     }
 
+    @FXML
+    public void capitalizeLettersButtonOnAction()
+    {
+
+    }
+
+    @FXML
+    public void generatePasswordButtonOnClick()
+    {
+        List<String> passwordWords = new ArrayList<>();
+        generatedPasswordLabel.setText("");
+
+        if(includeEnglishWordsCheckBox.isSelected())
+        {
+            if(!englishWordCountTextField.textProperty().isEmpty().get() && Integer.parseInt(englishWordCountTextField.getText()) > 0)
+            {
+                passwordWords.addAll(wordUtil.getRandomEnglishWords(Integer.parseInt(englishWordCountTextField.getText())));
+            }
+            else
+            {
+                //bad
+                System.out.println();
+            }
+        }
+
+        if(includeRomanianWordsCheckBox.isSelected())
+        {
+            if(romanianWordCountTextField.textProperty().isNotEmpty().get() && Integer.parseInt(romanianWordCountTextField.getText()) > 0)
+            {
+                passwordWords.addAll(wordUtil.getRandomRomanianWords(Integer.parseInt(romanianWordCountTextField.getText())));
+            }
+            else
+            {
+                //bad
+                System.out.println();
+            }
+        }
+
+        String mustContainWords = mustContainTextField.getText();
+        if(!mustContainWords.isEmpty() && mustContainWords.matches("([a-zA-z0-9]+ *,* *)+"))
+        {
+            mustContainWords = mustContainWords.replace(" ", "");
+            String[] words = mustContainWords.split(",");
+            System.out.println(Arrays.toString(words));
+            passwordWords.addAll(Arrays.asList(words));
+        }
+
+        Collections.shuffle(passwordWords);
+        passwordWords.forEach(word -> generatedPasswordLabel.setText(generatedPasswordLabel.getText() + word + " "));
+
+    }
+
+    @FXML
+    public void insertSeparatorsButtonOnAction()
+    {
+        String separators = "`~!@#$%^&*()-_=+]}[{;:'\",<.>/?";
+        if(masterPasswordTextField.textProperty().isNotEmpty().get())
+        {
+            String passwordText = generatedPasswordLabel.getText();
+
+        }
+    }
+
+    private int getRandomSeparator(String separators)
+    {
+        return separators.charAt(ThreadLocalRandom.current().nextInt(0, separators.length()));
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
         passwordGenerationHBox.setVisible(false);
+        generatedPasswordLabel.setText("");
+
 
         passwordGenerationCheckBox.selectedProperty().addListener(((observable, oldValue, newValue) ->
         {
@@ -156,6 +249,7 @@ public class NewUserController extends ParentController implements FXMLControlle
         passwordsMatchLabel.setText("");
         masterPasswordTextField.textProperty().addListener((observable, oldValue, newValue) -> addPasswordMatchListener());
         confirmMasterPasswordField.textProperty().addListener((observable, oldValue, newValue) -> addPasswordMatchListener());
+
 
     }
 

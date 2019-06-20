@@ -54,7 +54,12 @@ public class ExistingUserController extends ParentController implements FXMLCont
         else
         {
             User user = userRepository.getByUsername(username);
-            if(user != null && !Arrays.equals(user.getMasterPassword(), loginPasswordField.getText().toCharArray()))
+            if(user == null)
+            {
+                errorLabel.setText("Invalid login credentials");
+                errorLabel.setVisible(true);
+            }
+            else if(!Arrays.equals(user.getMasterPassword(), loginPasswordField.getText().toCharArray()))
             {
                 errorLabel.setText("Invalid login credentials");
                 errorLabel.setVisible(true);
@@ -78,5 +83,10 @@ public class ExistingUserController extends ParentController implements FXMLCont
     public void initialize(URL location, ResourceBundle resources)
     {
         errorLabel.setVisible(false);
+
+        usernameTextField.textProperty().addListener((observable -> errorLabel.setVisible(false)));
+
+        loginPasswordField.textProperty().addListener((observable -> errorLabel.setVisible(false)));
+
     }
 }

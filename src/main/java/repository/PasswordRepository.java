@@ -4,6 +4,7 @@ import domain.Password;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @org.springframework.stereotype.Repository
@@ -13,22 +14,36 @@ public class PasswordRepository implements Repository<Password>
     @Autowired
     private Session session;
 
+    @Transactional
     @Override
     public boolean add(Password entity)
     {
         session.beginTransaction();
-        session.persist(entity);
-        session.getTransaction().commit();
+        try
+        {
+            session.persist(entity);
+        }
+        finally
+        {
+            session.getTransaction().commit();
+        }
 
         return session.contains(entity);
     }
 
-    @Override
+
     public boolean remove(Password entity)
     {
         session.beginTransaction();
-        session.remove(entity);
-        session.getTransaction().commit();
+        try
+        {
+            session.remove(entity);
+
+        }
+        finally
+        {
+            session.getTransaction().commit();
+        }
 
         return !session.contains(entity);
     }
@@ -40,8 +55,15 @@ public class PasswordRepository implements Repository<Password>
         Password oldPassword = session.get(Password.class, id);
 
         session.beginTransaction();
-        session.update(entity);
-        session.getTransaction().commit();
+        try
+        {
+            session.update(entity);
+        }
+        finally
+        {
+            session.getTransaction().commit();
+
+        }
 
         return !session.get(Password.class, id).equals(oldPassword);
     }

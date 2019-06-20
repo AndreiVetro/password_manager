@@ -11,12 +11,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="905.0" prefWidth="1402.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="977.0" prefWidth="1821.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <top>
-      <HBox spacing="800.0" BorderPane.alignment="TOP_LEFT">
-         <BorderPane.margin>
-            <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
-         </BorderPane.margin>
+      <VBox spacing="50.0">
          <children>
             <Button mnemonicParsing="false" onAction="#backButtonOnClick" text="Main page">
                <font>
@@ -29,10 +26,13 @@
                </font>
             </Label>
          </children>
-      </HBox>
+         <BorderPane.margin>
+            <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
+         </BorderPane.margin>
+      </VBox>
    </top>
    <center>
-      <VBox spacing="50.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="546.0" prefWidth="1302.0" spacing="50.0" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
          </BorderPane.margin>
@@ -67,7 +67,7 @@
                   </VBox>
                   <VBox prefHeight="104.0" prefWidth="182.0">
                      <children>
-                        <Label fx:id="passwordsMatchLabel" prefHeight="101.0" prefWidth="182.0" text="Label" wrapText="true">
+                        <Label fx:id="passwordsMatchLabel" prefHeight="101.0" text="Label" wrapText="true">
                            <font>
                               <Font size="25.0" />
                            </font>
@@ -81,45 +81,91 @@
                   <Font size="16.0" />
                </font>
             </CheckBox>
-            <HBox fx:id="passwordGenerationHBox" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+            <HBox fx:id="passwordGenerationHBox" prefHeight="418.0" prefWidth="1721.0" spacing="20.0">
                <children>
-                  <VBox prefHeight="145.0" prefWidth="300.0" spacing="15.0">
+                  <VBox prefHeight="124.0" prefWidth="395.0" spacing="20.0">
                      <children>
-                        <Label prefHeight="28.0" text="Must contain">
+                        <Label prefHeight="28.0" text="Must contain words">
                            <font>
                               <Font size="23.0" />
                            </font>
                         </Label>
-                        <HBox spacing="5.0">
+                        <HBox spacing="20.0">
                            <children>
-                              <Label prefHeight="28.0" prefWidth="139.0" text="Maximum of">
+                              <CheckBox fx:id="includeEnglishWordsCheckBox" mnemonicParsing="false" text="Include EN words">
                                  <font>
-                                    <Font size="23.0" />
+                                    <Font size="16.0" />
+                                 </font>
+                              </CheckBox>
+                              <HBox fx:id="englishWordCountHBox" spacing="5.0">
+                                 <children>
+                                    <Label prefHeight="28.0" text="# of words">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="englishWordCountTextField" prefHeight="25.0" prefWidth="34.0" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </HBox>
+                        <HBox spacing="20.0">
+                           <children>
+                              <CheckBox fx:id="includeRomanianWordsCheckBox" mnemonicParsing="false" text="Include RO words">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </CheckBox>
+                              <HBox fx:id="romanianWordCountHBox" spacing="5.0">
+                                 <children>
+                                    <Label prefHeight="28.0" text="# of words">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="romanianWordCountTextField" prefHeight="25.0" prefWidth="34.0" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="162.0" prefWidth="920.0" spacing="10.0">
+                     <children>
+                        <TextField fx:id="mustContainTextField" prefHeight="27.0" prefWidth="856.0" />
+                        <HBox spacing="50.0">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#capitalizeLettersButtonOnAction" text="Capitalize random letters">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </Button>
+                              <Button mnemonicParsing="false" onAction="#insertSeparatorsButtonOnAction" text="Insert separators">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </Button>
+                              <Button mnemonicParsing="false" onAction="#generatePasswordButtonOnClick" text="Generate">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </Button>
+                           </children>
+                        </HBox>
+                        <HBox fx:id="generatedPasswordHBox" prefHeight="313.0" prefWidth="920.0" spacing="30.0">
+                           <children>
+                              <Label prefHeight="30.0" prefWidth="497.0" text="Recommended password">
+                                 <font>
+                                    <Font size="20.0" />
                                  </font>
                               </Label>
-                              <TextField fx:id="maximumWordsTextField" prefHeight="27.0" prefWidth="43.0" />
-                              <Label prefHeight="28.0" prefWidth="76.0" text="words">
+                              <Label fx:id="generatedPasswordLabel" alignment="TOP_LEFT" prefHeight="223.0" prefWidth="942.0" text="placeholder" textFill="#709e2a" wrapText="true">
                                  <font>
-                                    <Font size="23.0" />
+                                    <Font name="Consolas" size="20.0" />
                                  </font>
                               </Label>
                            </children>
                         </HBox>
-                        <CheckBox fx:id="includeEnglishWordsCheckBox" mnemonicParsing="false" text="Include english words">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </CheckBox>
-                        <CheckBox fx:id="includeRomanianWordsCheckBox" mnemonicParsing="false" text="Include romanian words">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </CheckBox>
-                     </children>
-                  </VBox>
-                  <VBox prefHeight="145.0" prefWidth="750.0" spacing="10.0">
-                     <children>
-                        <TextField fx:id="mustContainTextField" prefHeight="27.0" prefWidth="856.0" />
                      </children>
                   </VBox>
                </children>
@@ -128,22 +174,26 @@
       </VBox>
    </center>
    <bottom>
-      <HBox alignment="CENTER_RIGHT" spacing="100.0" BorderPane.alignment="BOTTOM_RIGHT">
+      <VBox BorderPane.alignment="BOTTOM_RIGHT">
          <BorderPane.margin>
             <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
          </BorderPane.margin>
          <children>
-            <Label fx:id="errorLabel" prefHeight="37.0" prefWidth="1048.0" text="Error" textFill="RED" visible="false">
+            <Label fx:id="errorLabel" text="Error" textFill="RED" visible="false" wrapText="true">
                <font>
                   <Font size="30.0" />
                </font>
             </Label>
-            <Button minHeight="72.0" minWidth="163.0" mnemonicParsing="false" onAction="#createButtonOnClick" prefHeight="72.0" prefWidth="163.0" text="Create">
-               <font>
-                  <Font size="30.0" />
-               </font>
-            </Button>
+            <HBox alignment="CENTER_RIGHT" spacing="100.0">
+               <children>
+                  <Button minHeight="72.0" minWidth="163.0" mnemonicParsing="false" onAction="#createButtonOnClick" prefHeight="72.0" prefWidth="163.0" text="Create">
+                     <font>
+                        <Font size="30.0" />
+                     </font>
+                  </Button>
+               </children>
+            </HBox>
          </children>
-      </HBox>
+      </VBox>
    </bottom>
 </BorderPane>

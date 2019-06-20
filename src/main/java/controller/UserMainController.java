@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.ResourceBundle;
@@ -58,6 +59,7 @@ public class UserMainController extends ParentController implements FXMLControll
 
     private Boolean visiblePressed;
     private SelectionModel<Password> selectionModel;
+    private int selectedIndex = -1;
     private Password selectedPassword;
     private ObservableList<Password> passwordObservableList;
 
@@ -69,12 +71,16 @@ public class UserMainController extends ParentController implements FXMLControll
 
     private char[] password;
 
-    private String getRandomString() {
-        byte[] array = new byte[30];
-        new Random().nextBytes(array);
+    private static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-=`/.,;'[]~!@#$%^&*()_+}{}:?><|\"\\";
+    private static SecureRandom rnd = new SecureRandom();
 
-        return new String(array, Charset.forName("UTF-8"));
+    private String getRandomString(int len){
+        StringBuilder sb = new StringBuilder( len );
+        for( int i = 0; i < len; i++ )
+            sb.append( AB.charAt( rnd.nextInt(AB.length()) ) );
+        return sb.toString();
     }
+
 
     private void zeroArray(char[] array)
     {
@@ -88,21 +94,24 @@ public class UserMainController extends ParentController implements FXMLControll
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
+        errorLabel.setVisible(false);
         selectionModel = passwordListView.getSelectionModel();
-        passwordObservableList = passwordListView.getItems();
 
-        passwordListView.getSelectionModel().selectedItemProperty().addListener(observable ->
+        selectionModel.selectedItemProperty().addListener(observable ->
         {
             if(!selectionModel.isEmpty())
             {
                 selectedPassword = selectionModel.getSelectedItem();
-                System.out.println("selected " + selectedPassword);
-                serviceTextField.setText(String.valueOf(selectedPassword.getService()));
-                passwordTextField.setText(String.valueOf(selectedPassword.getText()));
+                selectedIndex = selectionModel.getSelectedIndex();
+                if(sourceButton == editButton)
+                {
+                    serviceTextField.setText(String.valueOf(selectedPassword.getService()));
+                    passwordTextField.setText(String.valueOf(selectedPassword.getText()));
+                }
+                System.out.println("selected " + selectedPassword + " " + selectedIndex);
             }
         });
 
-        errorLabel.setVisible(false);
         passwordListView.setItems(FXCollections.observableList(getPasswordsCurrentUser()));
         final Clipboard clipboard = Clipboard.getSystemClipboard();
         final ClipboardContent content = new ClipboardContent();
@@ -113,8 +122,10 @@ public class UserMainController extends ParentController implements FXMLControll
                 content.putString(String.valueOf(selectedPassword.getText()));
                 clipboard.setContent(content);
             }
-
         });
+
+        passwordObservableList = passwordListView.getItems();
+
 
         addEditHBox.setVisible(false);
 
@@ -122,6 +133,8 @@ public class UserMainController extends ParentController implements FXMLControll
         {
             sourceButton = (Button) event.getSource();
             addEditHBox.setVisible(true);
+            serviceTextField.clear();
+            passwordTextField.clear();
         });
 
         editButton.setOnAction(event ->
@@ -132,25 +145,25 @@ public class UserMainController extends ParentController implements FXMLControll
             {
                 serviceTextField.setText(String.valueOf(selectedPassword.getService()));
                 passwordTextField.setText(String.valueOf(selectedPassword.getText()));
-            }
-            if(addEditHBox.isVisible())
-            {
-                addEditHBox.setVisible(false);
-            }
-            else
-            {
-                addEditHBox.setVisible(true);
+
+                if(addEditHBox.isVisible())
+                {
+                    addEditHBox.setVisible(false);
+                }
+                else
+                {
+                    addEditHBox.setVisible(true);
+                }
             }
         });
 
-        generateButton.setOnAction(event -> passwordTextField.setText(getRandomString()));
+        generateButton.setOnAction(event -> passwordTextField.setText(getRandomString(20)));
 
         confirmButton.setOnAction(event ->
         {
-            if(sourceButton == addButton)
-            {
-                String service = serviceTextField.getText();
-                char[] password = passwordTextField.getText().toCharArray();
+            String service = serviceTextField.getText();
+            char[] password = passwordTextField.getText().toCharArray();
+
 
                 if(service.isEmpty())
                 {
@@ -162,21 +175,22 @@ public class UserMainController extends ParentController implements FXMLControll
                     errorLabel.setVisible(true);
                     errorLabel.setText("Password can't be empty");
                 }
-                else
+                else if(sourceButton == addButton)
                 {
                     Password newPassword = new Password(password, service.toCharArray(), Main.user);
                     addPassword(newPassword);
                     passwordObservableList.add(newPassword);
+                    addEditHBox.setVisible(false);
                 }
+                else if(sourceButton == editButton)
+                {
+                    Password updatedPassword = selectedPassword;
+                    updatedPassword.setService(service.toCharArray());
+                    updatedPassword.setText(password);
 
-            }
-            else
-            {
-
-                //edit stuff
-            }
-
-            addEditHBox.setVisible(false);
+                    updatePassword(updatedPassword);
+                    addEditHBox.setVisible(false);
+                }
         });
 
         serviceTextField.textProperty().addListener((observable) -> errorLabel.setVisible(false));
@@ -186,15 +200,19 @@ public class UserMainController extends ParentController implements FXMLControll
         {
             if(!selectionModel.isEmpty())
             {
+                System.out.println(selectedPassword);
                 removePassword(selectedPassword);
                 passwordObservableList.remove(selectedPassword);
+
+                if(passwordObservableList.size() > 0)
+                {
+                    selectedPassword = passwordListView.getFocusModel().getFocusedItem();
+                    selectedIndex = passwordListView.getFocusModel().getFocusedIndex();
+                }
+
                 if(addEditHBox.isVisible())
                 {
                     addEditHBox.setVisible(false);
-                    if(passwordObservableList.size() == 1)
-                    {
-                        selectedPassword = passwordObservableList.get(0);
-                    }
                 }
             }
         });
