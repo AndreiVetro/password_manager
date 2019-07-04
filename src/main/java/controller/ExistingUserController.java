@@ -20,10 +20,6 @@ import java.util.ResourceBundle;
 @Controller
 public class ExistingUserController extends ParentController implements FXMLController
 {
-
-    @Autowired
-    private UserRepository userRepository;
-
     @FXML
     private TextField usernameTextField;
 
@@ -32,6 +28,7 @@ public class ExistingUserController extends ParentController implements FXMLCont
 
     @FXML
     private Label errorLabel;
+
 
 
     @FXML
@@ -59,7 +56,7 @@ public class ExistingUserController extends ParentController implements FXMLCont
                 errorLabel.setText("Invalid login credentials");
                 errorLabel.setVisible(true);
             }
-            else if(!Arrays.equals(user.getMasterPassword(), loginPasswordField.getText().toCharArray()))
+            else if(!argon2.verify(String.valueOf(user.getMasterPassword()), loginPasswordField.getText().toCharArray()))
             {
                 errorLabel.setText("Invalid login credentials");
                 errorLabel.setVisible(true);

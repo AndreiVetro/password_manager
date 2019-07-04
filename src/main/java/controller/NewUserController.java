@@ -3,10 +3,7 @@ package controller;
 import app.Main;
 import domain.User;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +18,14 @@ import java.util.concurrent.ThreadLocalRandom;
 @Controller
 public class NewUserController extends ParentController implements FXMLController
 {
-
-    @Autowired
-    private UserRepository userRepository;
-
     @Autowired
     private WordUtil wordUtil;
+
+    @FXML
+    private Button insertSeparatorsButton;
+
+    @FXML
+    private Button capitalizeLettersButton;
 
     @FXML
     private TextField usernameTextField;
@@ -76,8 +75,12 @@ public class NewUserController extends ParentController implements FXMLControlle
     @FXML
     private HBox romanianWordCountHBox;
 
+    @FXML
+    private Button createButton;
 
-    private final static String PASSWORD_REGEX = "^(?=\\S*[A-Z])(?=\\S*[0-9])(?=\\S*[!@#$%^&*()_+=\\-`~{}\"|';:/?.>,<\\[\\]])\\S*$";
+    private final static String PASSWORD_REGEX = "^(?=\\S*[A-Z])(?=\\S*[0-9])(?=\\S*[!@F$%^&*()_+=\\-`~{}\"|';:/?.>,<\\[\\]])\\S*$";
+
+    private List<String> passwordWords;
 
     @FXML
     public void createButtonOnClick()
@@ -107,19 +110,17 @@ public class NewUserController extends ParentController implements FXMLControlle
         }
         else if(!masterPasswordTextField.getText().matches(PASSWORD_REGEX))
         {
-           errorLabel.setText("A master password must contain at least an uppercase character, PASSWORD_REGEX number, PASSWORD_REGEX special character and no spaces");
+           errorLabel.setText("A master password must contain at least an uppercase character, a number, a special character and no spaces");
         }
         else if(!masterPasswordTextField.getText().equals(confirmMasterPasswordField.getText()))
         {
             errorLabel.setText("The two passwords must match");
-
-            //TODO create button is disabled until passwords match
         }
         else
         {
             User user = new User();
             user.setUsername(username);
-            user.setMasterPassword(masterPasswordTextField.getText().toCharArray()); //this gets hashed
+            user.setMasterPassword(masterPasswordTextField.getText().toCharArray());
             userRepository.add(user);
 
             Main.goBackButtonOnClick();
@@ -142,11 +143,14 @@ public class NewUserController extends ParentController implements FXMLControlle
             {
                 passwordsMatchLabel.setText("Passwords match!");
                 passwordsMatchLabel.setTextFill(Color.web("#33cc33"));//green
+                createButton.setDisable(false);
             }
             else
             {
                 passwordsMatchLabel.setText("Passwords don't match!");
                 passwordsMatchLabel.setTextFill(Color.web("#ff0000"));//red
+                createButton.setDisable(true);
+
             }
         }
         else
@@ -158,13 +162,26 @@ public class NewUserController extends ParentController implements FXMLControlle
     @FXML
     public void capitalizeLettersButtonOnAction()
     {
+        String text = generatedPasswordLabel.getText();
+        StringBuilder stringBuilder = new StringBuilder(text);
+        do
+        {
+            int randomIndex = ThreadLocalRandom.current().nextInt(0, text.length());
+            if (stringBuilder.substring(randomIndex, randomIndex + 1).matches("[a-z]"))
+            {
+                stringBuilder.setCharAt(randomIndex, Character.toUpperCase(text.charAt(randomIndex)));
+                break;
+            }
+        } while(stringBuilder.toString().matches(".*[a-z].*"));
 
+
+        generatedPasswordLabel.setText(stringBuilder.toString());
     }
 
     @FXML
     public void generatePasswordButtonOnClick()
     {
-        List<String> passwordWords = new ArrayList<>();
+        passwordWords = new ArrayList<>();
         generatedPasswordLabel.setText("");
 
         if(includeEnglishWordsCheckBox.isSelected())
@@ -172,11 +189,6 @@ public class NewUserController extends ParentController implements FXMLControlle
             if(!englishWordCountTextField.textProperty().isEmpty().get() && Integer.parseInt(englishWordCountTextField.getText()) > 0)
             {
                 passwordWords.addAll(wordUtil.getRandomEnglishWords(Integer.parseInt(englishWordCountTextField.getText())));
-            }
-            else
-            {
-                //bad
-                System.out.println();
             }
         }
 
@@ -186,11 +198,6 @@ public class NewUserController extends ParentController implements FXMLControlle
             {
                 passwordWords.addAll(wordUtil.getRandomRomanianWords(Integer.parseInt(romanianWordCountTextField.getText())));
             }
-            else
-            {
-                //bad
-                System.out.println();
-            }
         }
 
         String mustContainWords = mustContainTextField.getText();
@@ -198,27 +205,41 @@ public class NewUserController extends ParentController implements FXMLControlle
         {
             mustContainWords = mustContainWords.replace(" ", "");
             String[] words = mustContainWords.split(",");
-            System.out.println(Arrays.toString(words));
             passwordWords.addAll(Arrays.asList(words));
         }
 
         Collections.shuffle(passwordWords);
         passwordWords.forEach(word -> generatedPasswordLabel.setText(generatedPasswordLabel.getText() + word + " "));
 
+        if(passwordWords.size() > 0)
+        {
+            insertSeparatorsButton.setDisable(false);
+            capitalizeLettersButton.setDisable(false);
+        }
+
+
     }
 
     @FXML
     public void insertSeparatorsButtonOnAction()
     {
-        String separators = "`~!@#$%^&*()-_=+]}[{;:'\",<.>/?";
-        if(masterPasswordTextField.textProperty().isNotEmpty().get())
+        String separators = "`~!@#%^&*()-_=+]}[{;:'\",<.>/?";
+
+        if(generatedPasswordLabel.textProperty().isNotEmpty().get())
         {
             String passwordText = generatedPasswordLabel.getText();
-
+            for(int i = 0; i < passwordWords.size() - 1; i++)
+            {
+                passwordText = passwordText.replaceFirst(" ", String.valueOf(getRandomSeparator(separators)));
+            }
+            generatedPasswordLabel.setText(passwordText);
         }
+
+        insertSeparatorsButton.setDisable(true);
+
     }
 
-    private int getRandomSeparator(String separators)
+    private char getRandomSeparator(String separators)
     {
         return separators.charAt(ThreadLocalRandom.current().nextInt(0, separators.length()));
     }
@@ -228,7 +249,10 @@ public class NewUserController extends ParentController implements FXMLControlle
     {
         passwordGenerationHBox.setVisible(false);
         generatedPasswordLabel.setText("");
-
+        passwordWords = new ArrayList<>();
+        createButton.setDisable(true);
+        insertSeparatorsButton.setDisable(true);
+        capitalizeLettersButton.setDisable(true);
 
         passwordGenerationCheckBox.selectedProperty().addListener(((observable, oldValue, newValue) ->
         {
@@ -249,8 +273,6 @@ public class NewUserController extends ParentController implements FXMLControlle
         passwordsMatchLabel.setText("");
         masterPasswordTextField.textProperty().addListener((observable, oldValue, newValue) -> addPasswordMatchListener());
         confirmMasterPasswordField.textProperty().addListener((observable, oldValue, newValue) -> addPasswordMatchListener());
-
-
     }
 
 }

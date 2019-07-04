@@ -1,5 +1,9 @@
 package configuration;
 
+import de.mkammerer.argon2.Argon2;
+import de.mkammerer.argon2.Argon2Factory;
+import org.cryptonode.jncryptor.AES256JNCryptor;
+import org.cryptonode.jncryptor.JNCryptor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.Bean;
@@ -27,4 +31,17 @@ public class SpringConfiguration
     {
         return new WordUtil();
     }
+
+    @Bean
+    Argon2 argon2()
+    {
+        return Argon2Factory.create();
+    }
+
+    @Bean
+    AES256JNCryptor aes256JNCryptor()
+    {
+        return new AES256JNCryptor();
+    }
+
 }

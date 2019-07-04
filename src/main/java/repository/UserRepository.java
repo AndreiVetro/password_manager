@@ -1,5 +1,7 @@
 package repository;
 
+import de.mkammerer.argon2.Argon2;
+import domain.Password;
 import domain.User;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +15,20 @@ public class UserRepository implements Repository<User>
     @Autowired
     private Session session;
 
+    @Autowired
+    private Argon2 argon2;
+
+    private void hashPasswordText(User user)
+    {
+        String hash = argon2.hash(10, 65536, 6, user.getMasterPassword());
+        user.setMasterPassword(hash.toCharArray());
+    }
+
+
     @Override
     public boolean add(User entity)
     {
+        hashPasswordText(entity);
         session.beginTransaction();
         session.persist(entity);
         session.getTransaction().commit();

@@ -1,6 +1,7 @@
 package controller;
 
 import app.Main;
+import de.mkammerer.argon2.Argon2;
 import domain.Password;
 import domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +17,13 @@ import java.util.ResourceBundle;
 class ParentController
 {
     @Autowired
-    private PasswordRepository passwordRepository;
+    PasswordRepository passwordRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
 
+    @Autowired
+    Argon2 argon2;
 
 
     List<Password> getPasswordsCurrentUser()

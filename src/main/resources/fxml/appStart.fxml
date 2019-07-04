@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="640.0" prefWidth="845.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="778.0" prefWidth="1289.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <VBox alignment="CENTER" prefHeight="665.0" prefWidth="773.0" spacing="40.0" BorderPane.alignment="CENTER">
          <children>
@@ -28,21 +28,58 @@
       </VBox>
    </center>
    <top>
-      <VBox prefHeight="268.0" prefWidth="805.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="449.0" prefWidth="1189.0" spacing="30.0" BorderPane.alignment="CENTER">
          <children>
-            <Label prefHeight="102.0" prefWidth="852.0" text="Password manager" textFill="#2314cd" wrapText="true">
+            <Label prefHeight="102.0" text="Password manager" textFill="#2314cd" wrapText="true">
                <font>
                   <Font size="20.0" />
                </font>
             </Label>
-            <Label prefHeight="102.0" prefWidth="852.0" text="Password managerA tool that would have a user remember one master password to easily access all other passwords. Features: -Generate a complex, easy to remember master password which makes use of the advantages of multilingual passwords;-Generate and store passwords for different services;-Have the possibility to customize the master password.To continue press the appropriate button" textFill="#2314cd" wrapText="true">
+            <Label prefHeight="102.0" text="A tool to remember one master password to easily access all your other passwords" textFill="#2314cd" wrapText="true">
                <font>
                   <Font size="20.0" />
                </font>
+            </Label>
+            <Label prefHeight="102.0" text="Features" textFill="#2314cd" wrapText="true">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <Label prefHeight="102.0" text="The ability to generate a complex, easy to remember master password" textFill="#2314cd" wrapText="true">
+               <font>
+                  <Font size="20.0" />
+               </font>
+               <VBox.margin>
+                  <Insets left="100.0" />
+               </VBox.margin>
+            </Label>
+            <Label prefHeight="60.0" text="Have the possibility to customize the master password with must-have words, separator insertion, random capitalization and language features" textFill="#2314cd" wrapText="true">
+               <font>
+                  <Font size="20.0" />
+               </font>
+               <VBox.margin>
+                  <Insets left="100.0" />
+               </VBox.margin>
+            </Label>
+            <Label prefHeight="102.0" text="Add, remove, edit and and generate passwords to different services" textFill="#2314cd" wrapText="true">
+               <font>
+                  <Font size="20.0" />
+               </font>
+               <VBox.margin>
+                  <Insets left="100.0" />
+               </VBox.margin>
+            </Label>
+            <Label prefHeight="102.0" text="To continue press the appropriate button" textFill="#2314cd" wrapText="true">
+               <font>
+                  <Font size="20.0" />
+               </font>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
             </Label>
          </children>
          <BorderPane.margin>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
          </BorderPane.margin>
       </VBox>
    </top>

@@ -2,6 +2,7 @@ package controller;
 
 import app.Main;
 import domain.Password;
+import javafx.animation.FadeTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -9,18 +10,25 @@ import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.util.Duration;
+import org.cryptonode.jncryptor.AES256JNCryptor;
+import org.cryptonode.jncryptor.CryptorException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.Random;
 import java.util.ResourceBundle;
+import org.apache.commons.codec.binary.Base64;
+
 
 @Controller
 public class UserMainController extends ParentController implements FXMLController
 {
+    @Autowired
+    private AES256JNCryptor aes256JNCryptor;
 
     private static Button sourceButton;
 
@@ -55,13 +63,20 @@ public class UserMainController extends ParentController implements FXMLControll
     private Button generateButton;
 
     @FXML
-    private Label visibleLabel;
+    private VBox helpVBox;
+
+    @FXML
+    private Label clipboardLabel;
+
+
 
     private Boolean visiblePressed;
     private SelectionModel<Password> selectionModel;
     private int selectedIndex = -1;
     private Password selectedPassword;
     private ObservableList<Password> passwordObservableList;
+    private FadeTransition fadeIn = new FadeTransition(Duration.millis(2000));
+    private FadeTransition fadeOut = new FadeTransition(Duration.millis(2000));
 
     @FXML
     public void backButtonOnClick()
@@ -69,15 +84,14 @@ public class UserMainController extends ParentController implements FXMLControll
         Main.goBackButtonOnClick();
     }
 
-    private char[] password;
 
-    private static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-=`/.,;'[]~!@#$%^&*()_+}{}:?><|\"\\";
+    private static final String alphaNumericSymbolString = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-=`/.,;'[]~!@#$%^&*()_+}{}:?><|\"\\";
     private static SecureRandom rnd = new SecureRandom();
 
-    private String getRandomString(int len){
-        StringBuilder sb = new StringBuilder( len );
-        for( int i = 0; i < len; i++ )
-            sb.append( AB.charAt( rnd.nextInt(AB.length()) ) );
+    private String getRandomString(){
+        StringBuilder sb = new StringBuilder(20);
+        for(int i = 0; i < 20; i++)
+            sb.append(  alphaNumericSymbolString.charAt(rnd.nextInt(alphaNumericSymbolString.length())));
         return sb.toString();
     }
 
@@ -90,10 +104,36 @@ public class UserMainController extends ParentController implements FXMLControll
         }
     }
 
+    @FXML
+    public void helpButtonOnClick()
+    {
+        helpVBox.setVisible(!helpVBox.isVisible());
+    }
+
+
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
+        clipboardLabel.setVisible(false);
+
+        fadeIn.setNode(clipboardLabel);
+        fadeIn.setFromValue(0.0);
+        fadeIn.setToValue(1.0);
+        fadeIn.setCycleCount(1);
+        fadeIn.setAutoReverse(false);
+
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.0);
+        fadeOut.setNode(clipboardLabel);
+        fadeOut.setAutoReverse(false);
+        fadeOut.setCycleCount(1);
+
+
+
+
+        helpVBox.setVisible(false);
         errorLabel.setVisible(false);
         selectionModel = passwordListView.getSelectionModel();
 
@@ -106,9 +146,8 @@ public class UserMainController extends ParentController implements FXMLControll
                 if(sourceButton == editButton)
                 {
                     serviceTextField.setText(String.valueOf(selectedPassword.getService()));
-                    passwordTextField.setText(String.valueOf(selectedPassword.getText()));
+                    passwordTextField.setText(decryptSelectedPassword());
                 }
-                System.out.println("selected " + selectedPassword + " " + selectedIndex);
             }
         });
 
@@ -119,9 +158,15 @@ public class UserMainController extends ParentController implements FXMLControll
         {
             if(!selectionModel.isEmpty())
             {
-                content.putString(String.valueOf(selectedPassword.getText()));
+                content.putString(decryptSelectedPassword());
                 clipboard.setContent(content);
+                clipboardLabel.setVisible(true);
+                fadeIn.playFromStart();
+                fadeOut.playFromStart();
+                //clipboardLabel.setVisible(false);
             }
+
+
         });
 
         passwordObservableList = passwordListView.getItems();
@@ -144,7 +189,7 @@ public class UserMainController extends ParentController implements FXMLControll
             if(!selectionModel.isEmpty())
             {
                 serviceTextField.setText(String.valueOf(selectedPassword.getService()));
-                passwordTextField.setText(String.valueOf(selectedPassword.getText()));
+                passwordTextField.setText(decryptSelectedPassword());
 
                 if(addEditHBox.isVisible())
                 {
@@ -157,7 +202,7 @@ public class UserMainController extends ParentController implements FXMLControll
             }
         });
 
-        generateButton.setOnAction(event -> passwordTextField.setText(getRandomString(20)));
+        generateButton.setOnAction(event -> passwordTextField.setText(getRandomString()));
 
         confirmButton.setOnAction(event ->
         {
@@ -177,6 +222,14 @@ public class UserMainController extends ParentController implements FXMLControll
                 }
                 else if(sourceButton == addButton)
                 {
+                    try
+                    {
+                        password = encryptPassword(password);
+                    }
+                    catch (CryptorException e)
+                    {
+                        e.printStackTrace();
+                    }
                     Password newPassword = new Password(password, service.toCharArray(), Main.user);
                     addPassword(newPassword);
                     passwordObservableList.add(newPassword);
@@ -186,7 +239,14 @@ public class UserMainController extends ParentController implements FXMLControll
                 {
                     Password updatedPassword = selectedPassword;
                     updatedPassword.setService(service.toCharArray());
-                    updatedPassword.setText(password);
+                    try
+                    {
+                        updatedPassword.setText(encryptPassword(password));
+                    }
+                    catch (CryptorException e)
+                    {
+                        e.printStackTrace();
+                    }
 
                     updatePassword(updatedPassword);
                     addEditHBox.setVisible(false);
@@ -200,7 +260,6 @@ public class UserMainController extends ParentController implements FXMLControll
         {
             if(!selectionModel.isEmpty())
             {
-                System.out.println(selectedPassword);
                 removePassword(selectedPassword);
                 passwordObservableList.remove(selectedPassword);
 
@@ -217,6 +276,27 @@ public class UserMainController extends ParentController implements FXMLControll
             }
         });
 
+    }
+
+    private String decryptSelectedPassword()
+    {
+        String text = String.valueOf(selectedPassword.getText());
+        byte[] bytes = null;
+        try
+        {
+            bytes = new Base64().decode(text);
+            bytes = aes256JNCryptor.decryptData(bytes, Main.user.getMasterPassword());
+        }
+        catch (CryptorException e)
+        {
+            e.printStackTrace();
+        }
+        return new String(bytes);
+    }
+
+    private char[] encryptPassword(char[] password) throws CryptorException
+    {
+        return new Base64().encodeToString(aes256JNCryptor.encryptData(new String(password).getBytes(), Main.user.getMasterPassword())).toCharArray();
     }
 
 }
