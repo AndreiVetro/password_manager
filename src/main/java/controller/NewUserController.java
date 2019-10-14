@@ -8,7 +8,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import repository.UserRepository;
 import util.WordUtil;
 
 import java.net.URL;
@@ -78,14 +77,16 @@ public class NewUserController extends ParentController implements FXMLControlle
     @FXML
     private Button createButton;
 
-    private final static String PASSWORD_REGEX = "^(?=\\S*[A-Z])(?=\\S*[0-9])(?=\\S*[!@F$%^&*()_+=\\-`~{}\"|';:/?.>,<\\[\\]])\\S*$";
+    private final static String PASSWORD_REGEX = "^(?=\\S*[A-Z])(?=\\S*[0-9])(?=\\S*[!@F$%^&*#()_+=\\-`~{}\"|';:/?.>,<\\[\\]])\\S*$";
 
     private List<String> passwordWords;
 
     @FXML
     public void createButtonOnClick()
     {
+        errorLabel.setText("");
         errorLabel.setVisible(true);
+
         String username = usernameTextField.getText();
 
         if(username.isEmpty())

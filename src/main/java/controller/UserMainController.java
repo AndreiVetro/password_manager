@@ -75,8 +75,8 @@ public class UserMainController extends ParentController implements FXMLControll
     private int selectedIndex = -1;
     private Password selectedPassword;
     private ObservableList<Password> passwordObservableList;
-    private FadeTransition fadeIn = new FadeTransition(Duration.millis(2000));
-    private FadeTransition fadeOut = new FadeTransition(Duration.millis(2000));
+    private final FadeTransition fadeIn = new FadeTransition(Duration.millis(2000));
+    private final FadeTransition fadeOut = new FadeTransition(Duration.millis(2000));
 
     @FXML
     public void backButtonOnClick()
@@ -86,7 +86,7 @@ public class UserMainController extends ParentController implements FXMLControll
 
 
     private static final String alphaNumericSymbolString = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-=`/.,;'[]~!@#$%^&*()_+}{}:?><|\"\\";
-    private static SecureRandom rnd = new SecureRandom();
+    private static final SecureRandom rnd = new SecureRandom();
 
     private String getRandomString(){
         StringBuilder sb = new StringBuilder(20);
@@ -98,6 +98,7 @@ public class UserMainController extends ParentController implements FXMLControll
 
     private void zeroArray(char[] array)
     {
+        //noinspection SynchronizationOnLocalVariableOrMethodParameter
         synchronized (array)
         {
             Arrays.fill(array, '0');
@@ -249,6 +250,7 @@ public class UserMainController extends ParentController implements FXMLControll
                     }
 
                     updatePassword(updatedPassword);
+                    passwordObservableList.set(selectedIndex, updatedPassword);
                     addEditHBox.setVisible(false);
                 }
         });
@@ -298,5 +300,4 @@ public class UserMainController extends ParentController implements FXMLControll
     {
         return new Base64().encodeToString(aes256JNCryptor.encryptData(new String(password).getBytes(), Main.user.getMasterPassword())).toCharArray();
     }
-
 }

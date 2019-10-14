@@ -3,15 +3,12 @@ package configuration;
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
 import org.cryptonode.jncryptor.AES256JNCryptor;
-import org.cryptonode.jncryptor.JNCryptor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import util.WordUtil;
-
-import java.io.IOException;
 
 @Configuration
 @ComponentScan({"repository", "controller"})

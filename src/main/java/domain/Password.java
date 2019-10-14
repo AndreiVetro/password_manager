@@ -1,7 +1,6 @@
 package domain;
 
 import javax.persistence.*;
-import java.util.Arrays;
 
 @Entity
 public class Password

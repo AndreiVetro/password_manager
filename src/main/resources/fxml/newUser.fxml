@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="948.0" prefWidth="1285.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="948.0" prefWidth="1285.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1">
    <top>
       <VBox spacing="50.0">
          <children>
@@ -32,7 +32,7 @@
       </VBox>
    </top>
    <center>
-      <VBox spacing="50.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="495.0" prefWidth="1185.0" spacing="50.0" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
          </BorderPane.margin>
@@ -83,7 +83,7 @@
             </CheckBox>
             <HBox fx:id="passwordGenerationHBox" prefHeight="152.0" prefWidth="1185.0" spacing="20.0">
                <children>
-                  <VBox prefHeight="129.0" spacing="20.0">
+                  <VBox prefHeight="164.0" prefWidth="515.0" spacing="20.0">
                      <children>
                         <Label prefHeight="28.0" text="Must contain words">
                            <font>
@@ -130,17 +130,17 @@
                         </HBox>
                      </children>
                   </VBox>
-                  <VBox prefHeight="190.0" spacing="10.0">
+                  <VBox prefHeight="152.0" prefWidth="1073.0" spacing="10.0">
                      <children>
-                        <TextField fx:id="mustContainTextField" />
+                        <TextField fx:id="mustContainTextField" prefHeight="27.0" prefWidth="528.0" />
                         <HBox spacing="50.0">
                            <children>
-                              <Button fx:id="capitalizeLettersButton" mnemonicParsing="false" onAction="#capitalizeLettersButtonOnAction" text="Capitalize random letter">
+                              <Button fx:id="capitalizeLettersButton" mnemonicParsing="false" onAction="#capitalizeLettersButtonOnAction" text="Capitalize letter">
                                  <font>
                                     <Font size="15.0" />
                                  </font>
                               </Button>
-                              <Button fx:id="insertSeparatorsButton" mnemonicParsing="false" onAction="#insertSeparatorsButtonOnAction" text="Insert random separators">
+                              <Button fx:id="insertSeparatorsButton" mnemonicParsing="false" onAction="#insertSeparatorsButtonOnAction" text="Insert separators">
                                  <font>
                                     <Font size="15.0" />
                                  </font>
@@ -152,49 +152,23 @@
                               </Button>
                            </children>
                         </HBox>
-                        <HBox fx:id="generatedPasswordHBox" spacing="30.0">
+                        <HBox fx:id="generatedPasswordHBox" prefHeight="106.0" prefWidth="836.0" spacing="30.0">
                            <children>
-                              <Label prefHeight="30.0" text="Recommended password">
+                              <Label maxWidth="240.0" minWidth="240.0" prefHeight="26.0" prefWidth="240.0" text="Recommended password">
                                  <font>
                                     <Font size="20.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="generatedPasswordLabel" alignment="TOP_LEFT" text="placeholder" textFill="#709e2a" wrapText="true">
+                              <Label fx:id="generatedPasswordLabel" alignment="TOP_LEFT" prefHeight="75.0" text="placeholder" textFill="#709e2a" wrapText="true">
                                  <font>
                                     <Font name="Consolas" size="20.0" />
                                  </font>
                               </Label>
                            </children>
                         </HBox>
-                        <HBox fx:id="generatedPasswordHBox1" prefHeight="109.0" prefWidth="666.0" spacing="30.0">
-                           <children>
-                              <VBox>
-                                 <children>
-                                    <Label prefHeight="30.0" text="Make sure you include some numbers in your password as well!">
-                                       <font>
-                                          <Font size="20.0" />
-                                       </font>
-                                    </Label>
-                                    <Label prefHeight="30.0" text="Feel free to modify the recommended password!">
-                                       <font>
-                                          <Font size="20.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                              </VBox>
-                           </children>
-                        </HBox>
                      </children>
                   </VBox>
-                  <VBox prefHeight="200.0">
-                     <children>
-                        <Label text="Separate these with a comma">
-                           <font>
-                              <Font size="18.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </VBox>
+                  <VBox prefHeight="164.0" prefWidth="195.0" />
                </children>
             </HBox>
          </children>

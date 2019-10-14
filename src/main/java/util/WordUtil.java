@@ -1,9 +1,5 @@
 package util;
 
-import org.cryptonode.jncryptor.AES256JNCryptor;
-import org.cryptonode.jncryptor.CryptorException;
-import org.cryptonode.jncryptor.JNCryptor;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -14,8 +10,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class WordUtil
 {
-    private List<String> englishWords = new ArrayList<>();
-    private List<String> romanianWords = new ArrayList<>();
+    private final List<String> englishWords = new ArrayList<>();
+    private final List<String> romanianWords = new ArrayList<>();
 
     public WordUtil()
     {

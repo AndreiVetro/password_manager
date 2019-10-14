@@ -9,9 +9,7 @@ import org.springframework.stereotype.Controller;
 import repository.PasswordRepository;
 import repository.UserRepository;
 
-import java.net.URL;
 import java.util.List;
-import java.util.ResourceBundle;
 
 @Controller
 class ParentController
